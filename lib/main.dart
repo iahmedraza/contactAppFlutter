@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:contactapp/client/hive_names.dart';
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
+import 'package:call_log/call_log.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../model/contact.dart';
 
@@ -42,7 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final _name = TextEditingController();
   final _contact = TextEditingController();
   final UrlLauncherPlatform launcher = UrlLauncherPlatform.instance;
-  void _showForm() {
+  void _showForm([dynamic index]) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -114,7 +115,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
                       if (_formKey.currentState!.validate()) { 
                             
-                            _onFormSubmit();
+                            _onFormSubmit(index);
                             
                       }
                           },
@@ -162,9 +163,6 @@ class _MyHomePageState extends State<MyHomePage> {
     // A motion is a widget used to control how the pane animates.
     motion: const ScrollMotion(),
 
-    // A pane can dismiss the Slidable.
-    dismissible: DismissiblePane(onDismissed: () {}),
-
     // All actions are defined in the children parameter.
     children:  [
       // A SlidableAction can have an icon and/or a label.
@@ -187,7 +185,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: (BuildContext)  {
           _name.text = res?.name as String;
           _contact.text = res?.contact as String;
-          _showForm();
+          _showForm(index);
         } ,
         backgroundColor: Color(0xFF0392CF),
         foregroundColor: Colors.white,
@@ -210,6 +208,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     enableDomStorage: false,
                     universalLinksOnly: true,
                     headers: <String, String>{},);
+                    Iterable<CallLogEntry> entries = await CallLog.query(
+      number: res?.contact as String,
+      type: CallType.outgoing,
+    );
+    print(entries);
                     },
                   title: Text(res?.name == null ? '' : res?.name as String),
                   subtitle:
@@ -250,9 +253,14 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _onFormSubmit() {
+  void _onFormSubmit([dynamic index]) {
     Box<Contacts> contactsBox = Hive.box<Contacts>(HiveBoxes.contact);
-    contactsBox.add(Contacts(name: _name.text, contact: _contact.text));
+    Contacts value = Contacts(name: _name.text, contact: _contact.text);
+    if (index == null){
+    contactsBox.add(value);
+    } else {
+      contactsBox.putAt(index, value);
+    }
     _name.text = '';
     _contact.text = '';
     Navigator.of(context).pop();
