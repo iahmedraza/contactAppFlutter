@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:contactapp/client/hive_names.dart';
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
-import 'package:call_log/call_log.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../model/contact.dart';
 
@@ -208,11 +207,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     enableDomStorage: false,
                     universalLinksOnly: true,
                     headers: <String, String>{},);
-                    Iterable<CallLogEntry> entries = await CallLog.query(
-      number: res?.contact as String,
-      type: CallType.outgoing,
-    );
-    print(entries);
                     },
                   title: Text(res?.name == null ? '' : res?.name as String),
                   subtitle:
