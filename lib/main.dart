@@ -15,8 +15,6 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -48,59 +46,36 @@ class _MyHomePageState extends State<MyHomePage> {
         builder: (BuildContext context) {
           return AlertDialog(
             content: Stack(
-              // overflow: Overflow.visible,
               children: <Widget>[
-                // Positioned(
-                //   right: -40.0,
-                //   top: -40.0,
-                //   child: InkResponse(
-                //     onTap: () {
-                //       Navigator.of(context).pop();
-                //     },
-                //     child: CircleAvatar(
-                //       child: Icon(Icons.close),
-                //       backgroundColor: Colors.red,
-                //     ),
-                //   ),
-                // ),
                 Form(
                   key: _formKey,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      // Padding(
-                      //   padding: EdgeInsets.all(8.0),
-                      //   child:
                       TextFormField(
                         validator: (value) {
-                          if (value == null || value.isEmpty ) {
+                          if (value == null || value.isEmpty) {
                             return 'Enter name';
                           }
                           return null;
                         },
                         decoration: const InputDecoration(
-                          // icon: Icon(Icons.account_circle),
                           labelText: 'Name',
                         ),
                         controller: _name,
                       ),
-                      // ),
-                      // Padding(
-                      //   padding: EdgeInsets.all(8.0),
                       TextFormField(
                         keyboardType: TextInputType.phone,
                         validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Enter your phone no';
-                        } else if (value.length != 11){
-                          return 'Mobile Number must be of 11 digit';
+                          if (value == null || value.isEmpty) {
+                            return 'Enter your phone no';
+                          } else if (value.length != 11) {
+                            return 'Mobile Number must be of 11 digit';
+                          } else {
+                            return null;
                           }
-                        else{
-                          return null;
-                          }
-                    } ,
+                        },
                         decoration: const InputDecoration(
-                          // icon: Icon(Icons.account_circle),
                           labelText: 'Phone',
                         ),
                         controller: _contact,
@@ -111,12 +86,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: ElevatedButton(
                           child: const Text("Submit"),
                           onPressed: () {
-
-                      if (_formKey.currentState!.validate()) { 
-                            
-                            _onFormSubmit(index);
-                            
-                      }
+                            if (_formKey.currentState!.validate()) {
+                              _onFormSubmit(index);
+                            }
                           },
                         ),
                       )
@@ -127,12 +99,12 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           );
         }).then((exit) {
-  if (exit == null) {
-    _name.text = '';
-    _contact.text = '';
-    return;
-    }
-  });
+      if (exit == null) {
+        _name.text = '';
+        _contact.text = '';
+        return;
+      }
+    });
   }
 
   @override
@@ -154,87 +126,53 @@ class _MyHomePageState extends State<MyHomePage> {
             itemBuilder: (context, index) {
               Contacts? res = box.getAt(index);
               return Slidable(
-  // Specify a key if the Slidable is dismissible.
-  key: const ValueKey(0),
-
-  // The start action pane is the one at the left or the top side.
-  startActionPane: ActionPane(
-    // A motion is a widget used to control how the pane animates.
-    motion: const ScrollMotion(),
-
-    // All actions are defined in the children parameter.
-    children:  [
-      // A SlidableAction can have an icon and/or a label.
-      SlidableAction(
-        onPressed: (BuildContext) => res?.delete() ,
-        backgroundColor: Color(0xFFFE4A49),
-        foregroundColor: Colors.white,
-        icon: Icons.delete,
-        label: 'Delete',
-      ),
-    ],
-  ),
-
-  // The end action pane is the one at the right or the bottom side.
-  endActionPane: ActionPane(
-    motion: ScrollMotion(),
-    children: [
-      
-      SlidableAction(
-        onPressed: (BuildContext)  {
-          _name.text = res?.name as String;
-          _contact.text = res?.contact as String;
-          _showForm(index);
-        } ,
-        backgroundColor: Color(0xFF0392CF),
-        foregroundColor: Colors.white,
-        icon: Icons.edit,
-        label: 'Edit',
-      ),
-    ],
-  ),
-
-  // The child of the Slidable is what the user sees when the
-  // component is not dragged.
-   child: ListTile(
+                key: const ValueKey(0),
+                startActionPane: ActionPane(
+                  motion: const ScrollMotion(),
+                  children: [
+                    SlidableAction(
+                      onPressed: (BuildContext context) => res?.delete(),
+                      backgroundColor: Color(0xFFFE4A49),
+                      foregroundColor: Colors.white,
+                      icon: Icons.delete,
+                      label: 'Delete',
+                    ),
+                  ],
+                ),
+                endActionPane: ActionPane(
+                  motion: ScrollMotion(),
+                  children: [
+                    SlidableAction(
+                      onPressed: (BuildContext context) {
+                        _name.text = res?.name as String;
+                        _contact.text = res?.contact as String;
+                        _showForm(index);
+                      },
+                      backgroundColor: const Color(0xFF0392CF),
+                      foregroundColor: Colors.white,
+                      icon: Icons.edit,
+                      label: 'Edit',
+                    ),
+                  ],
+                ),
+                child: ListTile(
                   onTap: () async {
                     print(res);
                     await launcher.launch(
-                    'tel://${res?.contact}',
-                    useSafariVC: false,
-                    useWebView: false,
-                    enableJavaScript: false,
-                    enableDomStorage: false,
-                    universalLinksOnly: true,
-                    headers: <String, String>{},);
-                    },
+                      'tel://${res?.contact}',
+                      useSafariVC: false,
+                      useWebView: false,
+                      enableJavaScript: false,
+                      enableDomStorage: false,
+                      universalLinksOnly: true,
+                      headers: <String, String>{},
+                    );
+                  },
                   title: Text(res?.name == null ? '' : res?.name as String),
                   subtitle:
                       Text(res?.contact == null ? '' : res?.contact as String),
                 ),
-);
-              // return Dismissible(
-              //   background: Container(color: Colors.red),
-              //   key: UniqueKey(),
-              //   onDismissed: (direction) {
-              //     res?.delete();
-              //   },
-                // child: ListTile(
-                //   onTap: () async {
-                //     await launcher.launch(
-                //     'tel://${res?.contact}',
-                //     useSafariVC: false,
-                //     useWebView: false,
-                //     enableJavaScript: false,
-                //     enableDomStorage: false,
-                //     universalLinksOnly: true,
-                //     headers: <String, String>{},);
-                //     },
-                //   title: Text(res?.name == null ? '' : res?.name as String),
-                //   subtitle:
-                //       Text(res?.contact == null ? '' : res?.contact as String),
-                // ),
-              // );
+              );
             },
           );
         },
@@ -243,15 +181,15 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: _showForm,
         tooltip: 'Add Contact',
         child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 
   void _onFormSubmit([dynamic index]) {
     Box<Contacts> contactsBox = Hive.box<Contacts>(HiveBoxes.contact);
     Contacts value = Contacts(name: _name.text, contact: _contact.text);
-    if (index == null){
-    contactsBox.add(value);
+    if (index == null) {
+      contactsBox.add(value);
     } else {
       contactsBox.putAt(index, value);
     }
